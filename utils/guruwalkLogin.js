@@ -35,7 +35,7 @@ const getNewCookies = async () => {
   const $resInit = cheerio.load(resInit.data);
   const authenticityToken = $resInit('meta[name="csrf-token"]').attr("content");
 
-  console.log("Got authenticityToken :" + authenticityToken);
+  console.log("Got authenticityToken for Guruwalk");
 
   const resLogin = await axios({
     method: "post",

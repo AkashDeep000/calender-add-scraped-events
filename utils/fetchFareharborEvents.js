@@ -4,13 +4,11 @@ let fareharborCookies = await getCookies();
 
 const fetchFareharborEvents = async (page) => {
   const events = [];
-  const getRes = async (page) => {
+  const getRes = async (url, page) => {
     try {
       const res = await axios({
         method: "get",
-        url: `https://fareharbor.com/api/v1/companies/gironaexplorers/search/bookings/new/${
-          page > 1 ? `?page=${page - 1}` : ""
-        }`,
+        url: `${url}${page > 1 ? `?page=${page - 1}` : ""}`,
         headers: {
           Cookie: fareharborCookies,
           accept: "application/json, text/plain, */*",
@@ -41,7 +39,10 @@ const fetchFareharborEvents = async (page) => {
   };
   let res;
   try {
-    res = await getRes(page);
+    res = await getRes(
+      "https://fareharbor.com/api/v1/companies/gironaexplorers/search/bookings/new/",
+      page
+    );
   } catch (e) {
     console.log(e);
     fareharborCookies = await getNewCookies();
@@ -49,38 +50,53 @@ const fetchFareharborEvents = async (page) => {
   }
 
   const bookings = await res.data.bookings;
-
   const tour = {};
   const time = {};
-
+  //setting tours and time info
   for (let i = 0; i < bookings.length; i++) {
-    const event = {};
     if (bookings[i].item.name) {
       tour[bookings[i].item.uri] = bookings[i].item.name;
-      event.title = bookings[i].item.name;
-    } else {
-      event.title = tour[bookings[i].item.uri];
     }
     if (bookings[i].availability?.utc_start_at) {
       time[bookings[i].availability.uri] = {
         utc_start_at: bookings[i].availability.utc_start_at,
         utc_end_at: bookings[i].availability.utc_end_at,
       };
-      event.start = bookings[i].availability.utc_start_at;
-      event.end = bookings[i].availability.utc_end_at;
-    } else {
+    }
+  }
+
+  for (let i = 0; i < bookings.length; i++) {
+    if (!bookings[i].is_cancelled) {
+      //if can't find event details fetch from dedicated api
+      if (!time[bookings[i].availability.uri]) {
+        let res;
+        try {
+          res = await getRes(
+            "https://fareharbor.com" + bookings[i].availability.uri
+          );
+          tour[bookings[i].item.uri] = res.data.availability.item.name;
+          time[bookings[i].availability.uri] = {
+            utc_start_at: res.data.availability.utc_start_at,
+            utc_end_at: res.data.availability.utc_end_at,
+          };
+        } catch (e) {
+          console.log(e);
+          fareharborCookies = await getNewCookies();
+          res = await getRes(page);
+        }
+      }
+      
+      const event = {};
+      event.title = tour[bookings[i].item.uri];
       event.start = time[bookings[i].availability.uri].utc_start_at;
       event.end = time[bookings[i].availability.uri].utc_end_at;
-    }
-    event.id = bookings[i].uuid;
-    event.walker = bookings[i].contact.name;
-    event.language = bookings[i].contact.display_language;
-    event.peopleCount = bookings[i].customer_count;
-    event.adults = bookings[i].customer_breakdown_short.match(/\d/g)[0];
-    event.childs = bookings[i].customer_breakdown_short.match(/\d/g)[1];
-    event.phone = bookings[i].contact.normalized_phone;
-
-    if (!bookings[i].is_cancelled) {
+      event.id = bookings[i].unicode.split("#")[1];
+      event.walker = bookings[i].contact.name;
+      event.language = bookings[i].contact.display_language;
+      event.peopleCount = bookings[i].customer_count;
+      event.adults = bookings[i].customer_breakdown_short.match(/\d/g)[0];
+      event.childs = bookings[i].customer_breakdown_short.match(/\d/g)[1];
+      event.phone = bookings[i].contact.normalized_phone;
       events.push(event);
     }
   }

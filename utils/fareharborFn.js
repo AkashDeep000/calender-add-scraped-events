@@ -10,7 +10,7 @@ const db = new JSONdb("./storage.json");
 
 const client = new JWT({
   email: process.env.EMAIL,
-  key: process.env.KEY.split(String.raw`\n`).join('\n'),
+  key: process.env.KEY.split(String.raw`\n`).join("\n"),
   scopes: [
     "https://www.googleapis.com/auth/calendar",
     "https://www.googleapis.com/auth/calendar.events",
@@ -20,7 +20,6 @@ const calendar = google.calendar({ version: "v3" });
 
 let fetchFareharborEventsLoopCount = 1;
 const fetchFareharborEventsLoop = async () => {
-  console.log(fetchFareharborEventsLoopCount);
   const events = await fetchFareharborEvents(fetchFareharborEventsLoopCount);
   console.log("Fetching events page: " + fetchFareharborEventsLoopCount);
   for (let i = 0; i < events.length; i++) {
@@ -31,22 +30,28 @@ const fetchFareharborEventsLoop = async () => {
         const title = event.title;
 
         let calenderTitle = `${event.title} ${event.language}`;
-        console.log(calenderTitle);
+
+        const description = `${
+          event.childs ? `${event.adults}a ${event.childs}n` : event.peopleCount
+        } ${event.walker}\n${event.phone}\nLanguage: ${
+          event.language
+        }\nfareharbor.com`;
+
+        console.log({
+          fhEvent: {
+            title: calenderTitle,
+            description,
+          },
+        });
 
         const res = await calendar.events.insert({
           calendarId: process.env.CALENDER_ID,
           auth: client,
           requestBody: {
-            id: event.id,
+            //id: event.id,
             summary: calenderTitle,
             //location: locationRes,
-            description: `${
-              event.childs
-                ? `${event.adults}a ${event.childs}n`
-                : event.peopleCount
-            } ${event.walker}\n${event.phone}\nLanguage: ${
-              event.language
-            }\nfareharbor.com`,
+            description,
             start: {
               dateTime: event.start,
             },
@@ -56,11 +61,12 @@ const fetchFareharborEventsLoop = async () => {
           },
         });
 
-        console.log("Succesfullly added a event on Google calender from Fareharbor");
+        console.log(
+          "Succesfullly added a event from Fareharbor"
+        );
 
         //saving in local DB
         db.set(event.id, event);
-       
       } catch (error) {
         console.log(error.errors);
         if (error.errors && error.errors[0].reason === "duplicate") {
@@ -89,6 +95,3 @@ const loop = async () => {
 };
 
 export default loop;
-// cron.schedule(`*/${process.env.CORN} * * * * *`, () => {
-//   console.log("will execute every" + process.env.CORN + "second until stopped");
-// });

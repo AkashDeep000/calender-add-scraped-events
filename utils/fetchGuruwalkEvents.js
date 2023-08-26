@@ -1,7 +1,6 @@
 import cheerio from "cheerio";
 import { getNewCookies, getCookies } from "./guruwalkLogin.js";
 import axios from "axios";
-import csv from "csvtojson";
 import JSONdb from "simple-json-db";
 const db = new JSONdb("./storage.json");
 import dateFn from "date-and-time";
@@ -92,7 +91,7 @@ const fetchGuruwalkEvents = async (page) => {
         ).toString();
 
         data.time = dateFormated;
-        
+
         events.push(data);
       }
     });

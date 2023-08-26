@@ -3,6 +3,7 @@ import "dotenv/config";
 import guruwalkLoop from "./utils/guruwalkFn.js";
 import fareharborLoop from "./utils/fareharborFn.js";
 import fs from "fs";
+import express from "express"
 
 try {
   fareharborLoop();
@@ -21,3 +22,12 @@ cron.schedule(`0 0 * * 0`, () => {
   console.log("Deleting old records weekly");
   fs.unlinkSync("./storage.json");
 });
+// runing express server to ping this service
+const app = express()
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+
+app.listen(3000, () => {
+  console.log(`App listening on port 3000`)
+})
