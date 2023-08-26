@@ -10,7 +10,7 @@ const db = new JSONdb("./storage.json");
 
 const client = new JWT({
   email: process.env.EMAIL,
-  key: process.env.KEY,
+  key: process.env.KEY.split(String.raw`\n`).join('\n'),
   scopes: [
     "https://www.googleapis.com/auth/calendar",
     "https://www.googleapis.com/auth/calendar.events",
@@ -79,7 +79,7 @@ const fetchGuruwalkEventsLoop = async () => {
           calendarId: process.env.CALENDER_ID,
           auth: client,
           requestBody: {
-            // id: event.id,
+            id: event.id,
             summary: calenderTitle,
             //location: locationRes,
             description: `${event.peopleCount} ${event.walker}\n${event.phone}\nLanguage: ${event.language}\nguruwalk.com`,
