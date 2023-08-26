@@ -112,7 +112,7 @@ const loop = async () => {
   await fetchGuruwalkEventsLoop();
   const delay = (ms) => new Promise((res) => setTimeout(res, ms));
   fetchGuruwalkEventsLoopCount = 1;
-  console.log("waiting for " + process.env.DELAY + " Second before next fetch");
+  console.log("waiting for " + process.env.DELAY || 3 + " Second before next fetch");
   await delay(process.env.DELAY * 1000 || 3000);
   await loop();
 };
