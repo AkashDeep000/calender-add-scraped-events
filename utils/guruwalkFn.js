@@ -66,24 +66,26 @@ const fetchGuruwalkEventsLoop = async () => {
           calendarId: process.env.CALENDER_ID,
           auth: client,
           requestBody: {
-            // id: event.id,
+            id: event.id,
             summary: calenderTitle,
-            //location: locationRes,
             description,
             start: {
               dateTime: event.time,
               //   timeZone: "Europe/Madrid",
             },
             end: {
-              dateTime: dateFn.addMinutes(new Date(event.time), duration ||  120),
+              dateTime: dateFn.addMinutes(
+                new Date(event.time),
+                duration || 120
+              ),
             },
           },
         });
         console.log("Succesfullly added a event from Guruwalk");
-        //  console.log(res);
-        //saving in local DB
+        // console.log(res);
+        // saving in local DB
         db.set(event.id, event);
-        //calling new page
+        // calling new page
         if (i === events.length - 1) {
           fetchGuruwalkEventsLoopCount++;
           await fetchGuruwalkEventsLoop(fetchGuruwalkEventsLoopCount);

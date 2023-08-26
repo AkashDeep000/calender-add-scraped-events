@@ -48,9 +48,8 @@ const fetchFareharborEventsLoop = async () => {
           calendarId: process.env.CALENDER_ID,
           auth: client,
           requestBody: {
-            //id: event.id,
+            id: event.id,
             summary: calenderTitle,
-            //location: locationRes,
             description,
             start: {
               dateTime: event.start,
@@ -61,9 +60,7 @@ const fetchFareharborEventsLoop = async () => {
           },
         });
 
-        console.log(
-          "Succesfullly added a event from Fareharbor"
-        );
+        console.log("Succesfullly added a event from Fareharbor");
 
         //saving in local DB
         db.set(event.id, event);
