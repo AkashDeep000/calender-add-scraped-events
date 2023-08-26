@@ -31,43 +31,43 @@ const fetchGuruwalkEventsLoop = async () => {
 
         const title = event.title;
 
-        let calenderTitle = "";
+        let calendarTitle = "";
         if (title.toLowerCase().includes("tour")) {
-          calenderTitle += title.split("Tour")[0] || title.split("tour");
-          calenderTitle += " Tour";
+          calendarTitle += title.split("Tour")[0] || title.split("tour");
+          calendarTitle += " Tour";
           if (
             location &&
             title.toLowerCase().includes(location.toLowerCase())
           ) {
-            calenderTitle += " " + location;
+            calendarTitle += " " + location;
           }
         } else {
-          calenderTitle += title;
+          calendarTitle += title;
         }
         // add language on title
         if (event.language.toLowerCase() === "english") {
-          calenderTitle += " " + "🇬🇧";
+          calendarTitle += " " + "🇬🇧";
         } else {
-          calenderTitle += " " + event.language;
+          calendarTitle += " " + event.language;
         }
         if (title.toLowerCase().includes("night")) {
-          calenderTitle += " " + "Nocturn";
+          calendarTitle += " " + "Nocturn";
         }
         const description = `${event.peopleCount} ${event.walker}\n${event.phone}\nLanguage: ${event.language}\nguruwalk.com`;
 
         console.log({
           gwEvent: {
-            title: calenderTitle,
+            title: calendarTitle,
             description,
           },
         });
 
         const res = await calendar.events.insert({
-          calendarId: process.env.CALENDER_ID,
+          calendarId: process.env.CALENDAR_ID,
           auth: client,
           requestBody: {
             id: event.id,
-            summary: calenderTitle,
+            summary: calendarTitle,
             description,
             start: {
               dateTime: event.time,

@@ -29,7 +29,7 @@ const fetchFareharborEventsLoop = async () => {
       try {
         const title = event.title;
 
-        let calenderTitle = `${event.title} ${event.language}`;
+        let calendarTitle = `${event.title} ${event.language}`;
 
         const description = `${
           event.childs ? `${event.adults}a ${event.childs}n` : event.peopleCount
@@ -39,17 +39,17 @@ const fetchFareharborEventsLoop = async () => {
 
         console.log({
           fhEvent: {
-            title: calenderTitle,
+            title: calendarTitle,
             description,
           },
         });
 
         const res = await calendar.events.insert({
-          calendarId: process.env.CALENDER_ID,
+          calendarId: process.env.CALENDAR_ID,
           auth: client,
           requestBody: {
             id: event.id,
-            summary: calenderTitle,
+            summary: calendarTitle,
             description,
             start: {
               dateTime: event.start,
