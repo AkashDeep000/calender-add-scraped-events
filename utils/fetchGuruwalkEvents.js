@@ -8,6 +8,10 @@ import { DateTime } from "luxon";
 
 let guruwalkCookies = await getCookies();
 
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 const fetchGuruwalkEvents = async (page) => {
   const events = [];
   const getRes = async (page) => {
@@ -52,8 +56,23 @@ const fetchGuruwalkEvents = async (page) => {
     .map((li) => {
       if ($(li).attr("id")?.includes("booking")) {
         const data = {};
-        data.id = $(li).attr("id").replace("booking-", "");
-        data.title = $(li).find(".info-container").find("a").text().trim();
+        data.id = "gw" + $(li).attr("id").replace("booking-", "");
+        const title = capitalizeFirstLetter(
+          $(li).find(".info-container").find("a").text().trim()
+        );
+        const language = $(li).find("i.fa-globe").next().text().trim();
+        
+        if (title.includes("Tour")) {
+          data.title =
+          title.split("Tour")[0] +
+          "Tour " +
+          title.split(" Tour ")[1].split(" ")[0] +
+          (language.toLowerCase().includes("english") ? " 🇬🇧" : "") +
+          (title.toLowerCase().includes("night") ? " Noctum" : "");
+        } else {
+          data.title = title
+        }
+        
         data.url =
           "https://guruwalk.com" +
           $(li).find(".info-container").find("a").attr("href");
@@ -64,7 +83,6 @@ const fetchGuruwalkEvents = async (page) => {
           .last()
           .text()
           .trim();
-        data.language = $(li).find("i.fa-globe").next().text().trim();
         data.peopleCount = $(li)
           .find("i.fa-users")
           .next()
@@ -90,7 +108,8 @@ const fetchGuruwalkEvents = async (page) => {
           { zone: "Europe/Madrid" }
         ).toString();
 
-        data.time = dateFormated;
+        data.start = dateFormated;
+        data.end = dateFn.addHours(new Date(dateFormated), 2).toISOString();
 
         events.push(data);
       }

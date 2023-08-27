@@ -40,7 +40,7 @@ const fetchFareharborEvents = async (page) => {
   let res;
   try {
     res = await getRes(
-      "https://fareharbor.com/api/v1/companies/gironaexplorers/search/bookings/new/",
+      "https://fareharbor.com/api/v1/companies/gironaexplorers/search/bookings/new",
       page
     );
   } catch (e) {
@@ -61,6 +61,7 @@ const fetchFareharborEvents = async (page) => {
       time[bookings[i].availability.uri] = {
         utc_start_at: bookings[i].availability.utc_start_at,
         utc_end_at: bookings[i].availability.utc_end_at,
+        lang: bookings[i].availability.headline,
       };
     }
   }
@@ -78,6 +79,7 @@ const fetchFareharborEvents = async (page) => {
           time[bookings[i].availability.uri] = {
             utc_start_at: res.data.availability.utc_start_at,
             utc_end_at: res.data.availability.utc_end_at,
+            lang: res.data.availability.headline,
           };
         } catch (e) {
           console.log(e);
@@ -85,14 +87,20 @@ const fetchFareharborEvents = async (page) => {
           res = await getRes(page);
         }
       }
-      
+
       const event = {};
-      event.title = tour[bookings[i].item.uri];
+
+      const bookingsTitle = tour[bookings[i].item.uri];
+      const bookingsLang = time[bookings[i].availability.uri].lang;
+
+      event.title =
+        bookingsTitle +
+        (bookingsLang.toLowerCase().includes("english") ? " 🇬🇧" : "");
+
       event.start = time[bookings[i].availability.uri].utc_start_at;
       event.end = time[bookings[i].availability.uri].utc_end_at;
-      event.id = bookings[i].unicode.split("#")[1];
+      event.id = "fh" + bookings[i].unicode.split("#")[1];
       event.walker = bookings[i].contact.name;
-      event.language = bookings[i].contact.display_language;
       event.peopleCount = bookings[i].customer_count;
       event.adults = bookings[i].customer_breakdown_short.match(/\d/g)[0];
       event.childs = bookings[i].customer_breakdown_short.match(/\d/g)[1];
