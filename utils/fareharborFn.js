@@ -6,30 +6,37 @@ import addEvent from "./addEvent.js";
 import db from "../db/index.js";
 
 let fetchFareharborEventsLoopCount = 1;
+let isNotRelaventCount = 0
+
 const fetchFareharborEventsLoop = async () => {
   const events = await fetchFareharborEvents(fetchFareharborEventsLoopCount);
   console.log(
     "Fetching events page (Fareharbor): " + fetchFareharborEventsLoopCount
   );
-
+  
   const haveNextFn = () => {
     let isRelavent = false;
     let haveNextPage = false;
-
     for (let i = 0; i < events.length; i++) {
       if (
-        dateFn.subtract(new Date(), new Date(events[i].start)).toDays() < 60
+        dateFn.subtract(new Date(), new Date(events[i].start)).toDays() < 90
       ) {
         isRelavent = true;
       }
-
+      
       if (events.length !== 0 && !db.has(events[events.length - 1].id)) {
         haveNextPage = true;
       }
     }
-    return isRelavent && haveNextPage;
-  };
 
+    if (!isRelavent) {
+      isNotRelaventCount++;
+       } else {
+      isNotRelaventCount = 0;
+       }
+    return (isRelavent || isNotRelaventCount < 10) && haveNextPage;
+  };
+  
   const haveNext = haveNextFn();
   console.log({ haveNext });
 
