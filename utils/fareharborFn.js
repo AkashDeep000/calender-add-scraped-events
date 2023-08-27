@@ -19,12 +19,12 @@ const fetchFareharborEventsLoop = async () => {
 
     for (let i = 0; i < events.length; i++) {
       if (
-        dateFn.subtract(new Date(), new Date(events[0].start)).toDays() < 60
+        dateFn.subtract(new Date(), new Date(events[i].start)).toDays() < 60
       ) {
         isRelavent = true;
       }
 
-      if (!db.has(events[events.length - 1].id)) {
+      if (events.length !== 0 && !db.has(events[events.length - 1].id)) {
         haveNextPage = true;
       }
     }
@@ -40,7 +40,7 @@ const fetchFareharborEventsLoop = async () => {
     }
   }
 
-  if (events.length !== 0 && haveNext) {
+  if (haveNext) {
     fetchFareharborEventsLoopCount++;
     await fetchFareharborEventsLoop();
   }

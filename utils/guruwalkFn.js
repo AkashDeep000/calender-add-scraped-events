@@ -17,7 +17,7 @@ const fetchGuruwalkEventsLoop = async () => {
     let haveNextPage = false;
 
     for (let i = 0; i < events.length; i++) {
-      if (!db.has(events[events.length - 1].id)) {
+      if (events.length !== 0 && !db.has(events[events.length - 1].id)) {
         haveNextPage = true;
       }
     }
@@ -33,7 +33,7 @@ const fetchGuruwalkEventsLoop = async () => {
     }
   }
 
-  if (events.length !== 0 && haveNext) {
+  if (haveNext) {
     fetchGuruwalkEventsLoopCount++;
     await fetchGuruwalkEventsLoop();
   }
