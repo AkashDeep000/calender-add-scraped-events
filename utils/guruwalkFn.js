@@ -28,7 +28,7 @@ const fetchGuruwalkEventsLoop = async () => {
 
   for (let i = 0; i < events.length; i++) {
     if (dateFn.subtract(new Date(), new Date(events[i].start)).toDays() < 1) {
-      await addEvent(events[i], "GuruWalk");
+      await addEvent(events[i], "GW");
     }
   }
 

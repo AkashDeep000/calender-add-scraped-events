@@ -21,13 +21,9 @@ const addEvent = async (event, site) => {
       const calendarTitle = event.title;
       const description = `${
         event.childs ? `${event.adults}a ${event.childs}n` : event.peopleCount
-      } ${event.walker}\n${event.phone}`;
+      } ${event.walker}\n${event.phone}\n${site}`;
 
-      const previousEvent = await fetchPreviousEvent(
-        event.start,
-        event.end,
-        site
-      );
+      const previousEvent = await fetchPreviousEvent(event.start, event.end);
 
       if (!previousEvent) {
         const res = await calendar.events.insert({
@@ -35,7 +31,7 @@ const addEvent = async (event, site) => {
           auth: client,
           requestBody: {
             summary: calendarTitle,
-            description: description + "\n\n" + site,
+            description: description,
             start: {
               dateTime: event.start,
             },
@@ -50,10 +46,14 @@ const addEvent = async (event, site) => {
           auth: client,
           eventId: previousEvent.id,
           requestBody: {
-            summary: previousEvent.summary,
-            description: previousEvent.description
-              .replace(description + "\n\n", "")
-              .replace(site, `${description}\n\n${site}`),
+            summary:
+              (site === "FareHarbor" ? event.title : previousEvent.summary),
+            description:
+              previousEvent.description
+                .replace(description, "")
+                .replace("\n\n\n", "") +
+              "\n\n" +
+              description,
             start: previousEvent.start,
             end: previousEvent.end,
           },

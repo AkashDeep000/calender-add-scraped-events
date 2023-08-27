@@ -13,7 +13,7 @@ const client = new JWT({
 });
 const calendar = google.calendar({ version: "v3" });
 
-const fetchPreviousEvent = async (start, end, text) => {
+const fetchPreviousEvent = async (start, end) => {
   try {
     const res = await calendar.events.list({
       calendarId: process.env.CALENDAR_ID,
@@ -21,12 +21,12 @@ const fetchPreviousEvent = async (start, end, text) => {
       timeMin: start,
       timeMax: end,
     });
-    
+
     if (res.data.items.length === 0) return null;
     let previousEventIndex;
     let currentIndex = 0;
     const setPreviousEventId = () => {
-      if (res.data.items[currentIndex]?.description.includes(text)) {
+      if (res.data.items[currentIndex].creator.email === process.env.EMAIL) {
         previousEventIndex = currentIndex;
       } else if (currentIndex < res.data.items.length) {
         currentIndex++;
