@@ -21,7 +21,7 @@ const calendar = google.calendar({ version: "v3" });
 let fetchGuruwalkEventsLoopCount = 1;
 const fetchGuruwalkEventsLoop = async () => {
   const events = await fetchGuruwalkEvents(fetchGuruwalkEventsLoopCount);
-  console.log("Fetching events page: " + fetchGuruwalkEventsLoopCount);
+  console.log("Fetching events page (Guruwalk): " + fetchGuruwalkEventsLoopCount);
   for (let i = 0; i < events.length; i++) {
     const event = events[i];
     if (!db.has(event.id)) {
@@ -34,7 +34,7 @@ const fetchGuruwalkEventsLoop = async () => {
         let calendarTitle = "";
         if (title.toLowerCase().includes("tour")) {
           calendarTitle += title.split("Tour")[0] || title.split("tour");
-          calendarTitle += " Tour";
+          calendarTitle += "Tour";
           if (
             location &&
             title.toLowerCase().includes(location.toLowerCase())
@@ -112,12 +112,9 @@ const loop = async () => {
   await fetchGuruwalkEventsLoop();
   const delay = (ms) => new Promise((res) => setTimeout(res, ms));
   fetchGuruwalkEventsLoopCount = 1;
-  console.log("waiting for " + process.env.DELAY || 3 + " Second before next fetch");
+  console.log("waiting for " + (process.env.DELAY || 3) + " Second before next fetch (Guruwalk)");
   await delay(process.env.DELAY * 1000 || 3000);
   await loop();
 };
 
 export default loop;
-// cron.schedule(`*/${process.env.CORN} * * * * *`, () => {
-//   console.log("will execute every" + process.env.CORN + "second until stopped");
-// });

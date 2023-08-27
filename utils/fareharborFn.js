@@ -21,7 +21,7 @@ const calendar = google.calendar({ version: "v3" });
 let fetchFareharborEventsLoopCount = 1;
 const fetchFareharborEventsLoop = async () => {
   const events = await fetchFareharborEvents(fetchFareharborEventsLoopCount);
-  console.log("Fetching events page: " + fetchFareharborEventsLoopCount);
+  console.log("Fetching events page (Fareharbor): " + fetchFareharborEventsLoopCount);
   for (let i = 0; i < events.length; i++) {
     const event = events[i];
     if (!db.has(event.id)) {
@@ -86,7 +86,7 @@ const loop = async () => {
   await fetchFareharborEventsLoop();
   const delay = (ms) => new Promise((res) => setTimeout(res, ms));
   fetchFareharborEventsLoopCount = 1;
-  console.log("waiting for " + process.env.DELAY || 3 + " Second before next fetch");
+  console.log("waiting for " + (process.env.DELAY || 3) + " Second before next fetch (Fareharbor)");
   await delay(process.env.DELAY * 1000 || 3000);
   await loop();
 };
