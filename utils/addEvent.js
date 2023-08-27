@@ -3,9 +3,7 @@ import { google } from "googleapis";
 import { JWT } from "google-auth-library";
 import fetchFareharborEvents from "./fetchFareharborEvents.js";
 import fetchPreviousEvent from "./fetchPreviousEvent.js";
-import JSONdb from "simple-json-db";
-
-const db = new JSONdb("./storage.json");
+import db from "../db/index.js";
 const client = new JWT({
   email: process.env.EMAIL,
   key: process.env.KEY.split(String.raw`\n`).join("\n"),

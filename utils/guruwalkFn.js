@@ -3,8 +3,7 @@ import dateFn from "date-and-time";
 import fetchGuruwalkEvents from "./fetchGuruwalkEvents.js";
 import fetchPreviousEvent from "./fetchPreviousEvent.js";
 import addEvent from "./addEvent.js";
-import JSONdb from "simple-json-db";
-const db = new JSONdb("./storage.json");
+import db from "../db/index.js";
 
 let fetchGuruwalkEventsLoopCount = 1;
 const fetchGuruwalkEventsLoop = async () => {
