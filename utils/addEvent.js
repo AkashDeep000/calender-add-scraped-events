@@ -49,11 +49,11 @@ const addEvent = async (event, site) => {
             summary:
               (site === "FareHarbor" ? event.title : previousEvent.summary),
             description:
-              previousEvent.description
+              (previousEvent.description
                 .replace(description, "")
                 .replace("\n\n\n", "") +
               "\n\n" +
-              description,
+              description).trim(),
             start: previousEvent.start,
             end: previousEvent.end,
           },
