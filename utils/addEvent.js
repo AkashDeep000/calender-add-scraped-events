@@ -47,7 +47,7 @@ const addEvent = async (event, site) => {
           eventId: previousEvent.id,
           requestBody: {
             summary:
-              (site === "FareHarbor" ? event.title : previousEvent.summary),
+              (event.id.startsWith("fh") ? event.title : previousEvent.summary),
             description:
               (previousEvent.description
                 .replace(description, "")
