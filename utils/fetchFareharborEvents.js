@@ -57,7 +57,7 @@ const fetchFareharborEvents = async (page) => {
     if (bookings[i].item.name) {
       tour[bookings[i].item.uri] = bookings[i].item.name;
     }
-    if (bookings[i].availability?.utc_start_at) {
+    if (bookings[i].availability.utc_start_at) {
       time[bookings[i].availability.uri] = {
         utc_start_at: bookings[i].availability.utc_start_at,
         utc_end_at: bookings[i].availability.utc_end_at,
@@ -75,7 +75,6 @@ const fetchFareharborEvents = async (page) => {
           res = await getRes(
             "https://fareharbor.com" + bookings[i].availability.uri
           );
-          tour[bookings[i].item.uri] = res.data.availability.item.name;
           time[bookings[i].availability.uri] = {
             utc_start_at: res.data.availability.utc_start_at,
             utc_end_at: res.data.availability.utc_end_at,

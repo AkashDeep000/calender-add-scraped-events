@@ -19,6 +19,7 @@
     "google-auth-library": "^9.0.0",
     "googleapis": "^123.0.0",
     "luxon": "^3.3.0",
+    "node-cron": "^3.0.2",
     "simple-json-db": "^2.0.0"
   }
 }

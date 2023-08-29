@@ -13,7 +13,7 @@ const client = new JWT({
 });
 const calendar = google.calendar({ version: "v3" });
 
-const fetchPreviousEvent = async (start, end) => {
+const fetchPreviousEvent = async (start, end, title) => {
   try {
     const res = await calendar.events.list({
       calendarId: process.env.CALENDAR_ID,
@@ -23,12 +23,46 @@ const fetchPreviousEvent = async (start, end) => {
     });
 
     if (res.data.items.length === 0) return null;
+
     let previousEventIndex;
     let currentIndex = 0;
+
+    const isSameLang = () => {
+      if (res.data.items[currentIndex].summary.includes("🇬🇧")) {
+        return title.includes("🇬🇧");
+      } else {
+        return !title.includes("🇬🇧");
+      }
+    };
+
+    const isSamePrice = () => {
+      if (res.data.items[currentIndex].summary.toLowerCase().includes("free")) {
+        return title.toLowerCase().includes("free");
+      } else {
+        return !title.toLowerCase().includes("free");
+      }
+    };
+
     const setPreviousEventId = () => {
-      if (res.data.items[currentIndex].creator.email === process.env.EMAIL) {
+      if (
+        res.data.items[currentIndex]?.creator.email === process.env.EMAIL &&
+        dateFn
+          .subtract(
+            new Date(start),
+            new Date(res.data.items[currentIndex].start.dateTime)
+          )
+          .toMinutes() === 0 &&
+        dateFn
+          .subtract(
+            new Date(end),
+            new Date(res.data.items[currentIndex].end.dateTime)
+          )
+          .toMinutes() === 0 &&
+        isSameLang() &&
+        isSamePrice()
+      ) {
         previousEventIndex = currentIndex;
-      } else if (currentIndex < res.data.items.length) {
+      } else if (currentIndex < res.data.items.length - 1) {
         currentIndex++;
         setPreviousEventId();
       }

@@ -3,6 +3,8 @@ import guruwalkLoop from "./utils/guruwalkFn.js";
 import fareharborLoop from "./utils/fareharborFn.js";
 import fs from "fs";
 import express from "express";
+import cron from "node-cron";
+import db from "./db/index.js";
 
 try {
   fareharborLoop();
@@ -25,4 +27,12 @@ app.get("/", (req, res) => {
 
 app.listen(3000, () => {
   console.log(`App listening on port 3000`);
+});
+
+cron.schedule("0 1 * * *", () => {
+  console.log("Deleting old records...");
+  const previousDB = db.JSON();
+  console.log(previousDB);
+  db.JSON(Object.fromEntries(Object.entries(previousDB).slice(-50)));
+  console.log(db.JSON());
 });
