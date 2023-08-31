@@ -36,7 +36,10 @@ const addEvent = async (event, source) => {
 
     //Creating Event
     try {
-      const calendarTitle = event.title.replaceAll(/Free Tour/gi, "FT");
+      const calendarTitle = structuredClone(event).title.replace(
+        "Free Tour",
+        "FT"
+      );
       const description = `${
         event.childs ? `${event.adults}a ${event.childs}n` : event.peopleCount
       } ${event.walker}\n${event.phone}\n${source}`;
@@ -44,7 +47,7 @@ const addEvent = async (event, source) => {
       const previousEvent = await fetchPreviousEvent(
         event.start,
         gwEnd || event.end,
-        event.title
+        calendarTitle
       );
 
       if (!previousEvent) {

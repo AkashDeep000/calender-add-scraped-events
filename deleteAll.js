@@ -13,13 +13,13 @@ const client = new JWT({
 const calendar = google.calendar({ version: "v3" });
 let deleteCount = 0;
 let totalCount = 0;
+let pageToken;
 const deleteEvent = async () => {
   const res = await calendar.events.list({
     calendarId: process.env.CALENDAR_ID,
     auth: client,
-    maxResults: 2500,
-    // singleEvents: true,
   });
+  console.log(res)
   totalCount += res.data.items.length;
   console.log(totalCount);
   for (let i = 0; i < res.data.items.length; i++) {
@@ -34,6 +34,7 @@ const deleteEvent = async () => {
     }
   }
   if (res.data.items.length === 2500) {
+    pageToken = res.data.nextPageToken;
     await deleteEvent();
   }
 };

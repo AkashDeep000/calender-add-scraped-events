@@ -36,13 +36,16 @@ const fetchPreviousEvent = async (start, end, title) => {
     };
 
     const isSamePrice = () => {
-      if (res.data.items[currentIndex].summary.toLowerCase().includes("free")) {
-        return title.toLowerCase().includes("free");
+      if (res.data.items[currentIndex].summary.includes("FH")) {
+        return title.includes("FH");
       } else {
-        return !title.toLowerCase().includes("free");
+        return !title.includes("FH");
       }
     };
-
+console.log({
+isSameLang: isSameLang(),
+isSamePrice: isSamePrice()
+})
     const setPreviousEventId = () => {
       if (
         res.data.items[currentIndex]?.creator.email === process.env.EMAIL &&
