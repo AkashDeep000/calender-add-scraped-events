@@ -42,7 +42,7 @@ const fetchFareharborEventsLoop = async () => {
 
   for (let i = 0; i < events.length; i++) {
     if (dateFn.subtract(new Date(), new Date(events[i].start)).toHours() < 1) {
-      await addEvent(events[i], "Web");
+      await addEvent(events[i], events[i].source);
     }
   }
 

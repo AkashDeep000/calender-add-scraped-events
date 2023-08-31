@@ -61,18 +61,21 @@ const fetchGuruwalkEvents = async (page) => {
           $(li).find(".info-container").find("a").text().trim()
         );
         const language = $(li).find("i.fa-globe").next().text().trim();
-        
-        if (title.includes("Tour")) {
-          data.title =
-          title.split("Tour")[0] +
-          "Tour " +
-          title.split(" Tour ")[1].split(" ")[0] +
+
+        if (title.includes("Free Tour Girona")) data.title = "Free Tour Girona";
+        if (title.includes("Free Tour por Besalú"))
+          data.title = "Free Tour Besalú";
+        if (title.includes("Free Tour Sant Feliu"))
+          data.title = "Free Tour Sant Feliu";
+        if (title.includes("Free Tour Sant Feliu de Guíxols"))
+          data.title = "Free Tour Sant Feliu de Guíxols";
+        if (!data.title) data.title = title;
+        data.title +=
           (language.toLowerCase().includes("english") ? " 🇬🇧" : "") +
           (title.toLowerCase().includes("night") ? " Noctum" : "");
-        } else {
-          data.title = title
-        }
-        
+
+        data.title = data.title.replace("Girona Noctum", "Noctum");
+
         data.url =
           "https://guruwalk.com" +
           $(li).find(".info-container").find("a").attr("href");

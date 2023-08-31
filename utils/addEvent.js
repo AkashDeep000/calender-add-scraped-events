@@ -17,7 +17,7 @@ const client = new JWT({
 });
 const calendar = google.calendar({ version: "v3" });
 
-const addEvent = async (event, site) => {
+const addEvent = async (event, source) => {
   if (!db.has(event.id)) {
     let gwEnd;
     if (event.id.startsWith("gw")) {
@@ -36,10 +36,10 @@ const addEvent = async (event, site) => {
 
     //Creating Event
     try {
-      const calendarTitle = event.title;
+      const calendarTitle = event.title.replaceAll(/Free Tour/gi, "FT");
       const description = `${
         event.childs ? `${event.adults}a ${event.childs}n` : event.peopleCount
-      } ${event.walker}\n${event.phone}\n${site}`;
+      } ${event.walker}\n${event.phone}\n${source}`;
 
       const previousEvent = await fetchPreviousEvent(
         event.start,
@@ -104,7 +104,7 @@ const addEvent = async (event, site) => {
           title: event.peopleCount + " " + calendarTitle,
           description,
           start: event.start,
-          site,
+          source,
         },
       });
 

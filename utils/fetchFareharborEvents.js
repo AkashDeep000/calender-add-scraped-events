@@ -46,16 +46,23 @@ const fetchFareharborEvents = async (page) => {
   } catch (e) {
     console.log(e);
     fareharborCookies = await getNewCookies();
-    res = await getRes(page);
+    res = await getRes(
+      "https://fareharbor.com/api/v1/companies/gironaexplorers/search/bookings/new",
+      page
+    );
   }
 
   const bookings = await res.data.bookings;
   const tour = {};
   const time = {};
+  const source = {};
   //setting tours and time info
   for (let i = 0; i < bookings.length; i++) {
     if (bookings[i].item.name) {
       tour[bookings[i].item.uri] = bookings[i].item.name;
+    }
+    if (bookings[i].user?.name) {
+      source[bookings[i].user.uri] = bookings[i].user.name;
     }
     if (bookings[i].availability.utc_start_at) {
       time[bookings[i].availability.uri] = {
@@ -71,20 +78,36 @@ const fetchFareharborEvents = async (page) => {
       //if can't find event details fetch from dedicated api
       if (!time[bookings[i].availability.uri]) {
         let res;
+
         try {
           res = await getRes(
             "https://fareharbor.com" + bookings[i].availability.uri
           );
-          time[bookings[i].availability.uri] = {
-            utc_start_at: res.data.availability.utc_start_at,
-            utc_end_at: res.data.availability.utc_end_at,
-            lang: res.data.availability.headline,
-          };
         } catch (e) {
           console.log(e);
           fareharborCookies = await getNewCookies();
-          res = await getRes(page);
+          res = await getRes(
+            "https://fareharbor.com" + bookings[i].availability.uri
+          );
         }
+        time[bookings[i].availability.uri] = {
+          utc_start_at: res.data.availability.utc_start_at,
+          utc_end_at: res.data.availability.utc_end_at,
+          lang: res.data.availability.headline,
+        };
+      }
+      //if can't find event name fetch from dedicated api
+      if (!tour[bookings[i].item.uri]) {
+        let res;
+        try {
+          res = await getRes("https://fareharbor.com" + bookings[i].item.uri);
+        } catch (e) {
+          console.log(e);
+          fareharborCookies = await getNewCookies();
+          res = await getRes("https://fareharbor.com" + bookings[i].item.uri);
+        }
+        tour[bookings[i].item.uri] = res.data.item.name;
+        console.log(res.data.item.name);
       }
 
       const event = {};
@@ -93,7 +116,9 @@ const fetchFareharborEvents = async (page) => {
       const bookingsLang = time[bookings[i].availability.uri].lang;
 
       event.title =
-        bookingsTitle +
+        (bookingsTitle.includes("History, Legends & Food")
+          ? "HLF"
+          : bookingsTitle) +
         (bookingsLang.toLowerCase().includes("english") ? " 🇬🇧" : "");
 
       event.start = time[bookings[i].availability.uri].utc_start_at;
@@ -104,6 +129,11 @@ const fetchFareharborEvents = async (page) => {
       event.adults = bookings[i].customer_breakdown_short.match(/\d/g)[0];
       event.childs = bookings[i].customer_breakdown_short.match(/\d/g)[1];
       event.phone = bookings[i].contact.normalized_phone;
+      event.source =
+        source[bookings[i].user?.uri]
+          ?.replace("-API", "")
+          ?.replace("API", "")
+          ?.trim() || "Web";
       events.push(event);
     }
   }
