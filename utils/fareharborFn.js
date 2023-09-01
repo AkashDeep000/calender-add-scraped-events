@@ -17,15 +17,15 @@ const fetchFareharborEventsLoop = async () => {
   const haveNextFn = () => {
     let isRelavent = false;
     let haveNextPage = false;
+    console.log(events[events.length - 1].id)
+    if (events.length !== 0 && !db.has(events[events.length - 1].id)) {
+      haveNextPage = true;
+    }
     for (let i = 0; i < events.length; i++) {
       if (
         dateFn.subtract(new Date(), new Date(events[i].start)).toDays() < 90
       ) {
         isRelavent = true;
-      }
-      
-      if (events.length !== 0 && !db.has(events[events.length - 1].id)) {
-        haveNextPage = true;
       }
     }
 
