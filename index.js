@@ -33,6 +33,6 @@ cron.schedule("0 1 * * *", () => {
   console.log("Deleting old records...");
   const previousDB = db.JSON();
   console.log(previousDB);
-  db.JSON(Object.fromEntries(Object.entries(previousDB).slice(-50)));
+  db.JSON(Object.fromEntries(Object.entries(previousDB).slice(-500)));
   console.log(db.JSON());
 });

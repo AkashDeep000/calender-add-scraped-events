@@ -120,14 +120,17 @@ const fetchFareharborEvents = async (page) => {
           ? "HLF"
           : bookingsTitle) +
         (bookingsLang.toLowerCase().includes("english") ? " 🇬🇧" : "");
-
+      event.title = event.title.replace("de Nit", "Nit");
+      event.title = event.title.includes("Nit")
+        ? event.title.replace(" Girona", "")
+        : event.title;
       event.start = time[bookings[i].availability.uri].utc_start_at;
       event.end = time[bookings[i].availability.uri].utc_end_at;
       event.id = "fh" + bookings[i].unicode.split("#")[1];
       event.walker = bookings[i].contact.name;
       event.peopleCount = bookings[i].customer_count;
-      event.adults = bookings[i].customer_breakdown_short?.match(/\d+/g)[0]
-      event.childs = bookings[i].customer_breakdown_short.match(/\d+/g)[1]
+      event.adults = bookings[i].customer_breakdown_short?.match(/\d+/g)[0];
+      event.childs = bookings[i].customer_breakdown_short.match(/\d+/g)[1];
       event.phone = bookings[i].contact.normalized_phone;
       event.source =
         source[bookings[i].user?.uri]

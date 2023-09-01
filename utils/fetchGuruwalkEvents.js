@@ -71,10 +71,12 @@ const fetchGuruwalkEvents = async (page) => {
           data.title = "Free Tour Sant Feliu de Guíxols";
         if (!data.title) data.title = title;
         data.title +=
-          (language.toLowerCase().includes("english") ? " 🇬🇧" : "") +
-          (title.toLowerCase().includes("night") ? " Noctum" : "");
+          (title.toLowerCase().includes("night") ? " Nit" : "") +
+          (language.toLowerCase().includes("english") ? " 🇬🇧" : "");
 
-        data.title = data.title.replace("Girona Noctum", "Noctum");
+        data.title = data.title.includes("Nit")
+          ? data.title.replace(" Girona", "")
+          : data.title;
 
         data.url =
           "https://guruwalk.com" +

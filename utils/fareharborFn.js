@@ -23,7 +23,7 @@ const fetchFareharborEventsLoop = async () => {
     console.log(haveNextPage);
     for (let i = 0; i < events.length; i++) {
       if (
-        dateFn.subtract(new Date(), new Date(events[i].start)).toDays() < 1
+        dateFn.subtract(new Date(), new Date(events[i].start)).toDays() < 30
       ) {
         isRelavent = true;
       }
