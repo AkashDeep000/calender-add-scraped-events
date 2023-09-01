@@ -6,24 +6,24 @@ import addEvent from "./addEvent.js";
 import db from "../db/index.js";
 
 let fetchFareharborEventsLoopCount = 1;
-let isNotRelaventCount = 0
+let isNotRelaventCount = 0;
 
 const fetchFareharborEventsLoop = async () => {
   const events = await fetchFareharborEvents(fetchFareharborEventsLoopCount);
   console.log(
     "Fetching events page (Fareharbor): " + fetchFareharborEventsLoopCount
   );
-  
+
   const haveNextFn = () => {
     let isRelavent = false;
     let haveNextPage = false;
-    console.log(events[events.length - 1].id)
     if (events.length !== 0 && !db.has(events[events.length - 1].id)) {
       haveNextPage = true;
     }
+    console.log(haveNextPage);
     for (let i = 0; i < events.length; i++) {
       if (
-        dateFn.subtract(new Date(), new Date(events[i].start)).toDays() < 90
+        dateFn.subtract(new Date(), new Date(events[i].start)).toDays() < 10
       ) {
         isRelavent = true;
       }
@@ -31,19 +31,17 @@ const fetchFareharborEventsLoop = async () => {
 
     if (!isRelavent) {
       isNotRelaventCount++;
-       } else {
+    } else {
       isNotRelaventCount = 0;
-       }
-    return (isRelavent || isNotRelaventCount < 15) && haveNextPage;
+    }
+    return (isRelavent || isNotRelaventCount < 1) && haveNextPage;
   };
-  
+
   const haveNext = haveNextFn();
   console.log({ haveNext });
 
   for (let i = 0; i < events.length; i++) {
-    if (dateFn.subtract(new Date(), new Date(events[i].start)).toHours() < 1) {
-      await addEvent(events[i], events[i].source);
-    }
+    await addEvent(events[i], events[i].source);
   }
 
   if (haveNext) {

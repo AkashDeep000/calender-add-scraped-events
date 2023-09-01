@@ -19,10 +19,16 @@ const calendar = google.calendar({ version: "v3" });
 
 const addEvent = async (event, source) => {
   if (!db.has(event.id)) {
+    if (dateFn.subtract(new Date(), new Date(event.start)).toHours() > 1) {
+      //saving in local DB
+      db.set(event.id, true);
+      return;
+    }
+
     let gwEnd;
     if (event.id.startsWith("gw")) {
       const getGWEnd = async () => {
-        if (!event.url) return null;
+        if (event.id.startsWith("fh")) return null;
         try {
           const { duration } = await fetchGuruwalkExtraInfo(event.url);
           return dateFn.addMinutes(new Date(event.start), duration || 120);
@@ -65,6 +71,8 @@ const addEvent = async (event, source) => {
             },
           },
         });
+        //saving in local DB
+        db.set(event.id, true);
       } else {
         const res = await calendar.events.update({
           calendarId: process.env.CALENDAR_ID,
@@ -100,6 +108,8 @@ const addEvent = async (event, source) => {
             end: previousEvent.end,
           },
         });
+        //saving in local DB
+        db.set(event.id, true);
       }
 
       console.log({
@@ -110,9 +120,6 @@ const addEvent = async (event, source) => {
           source,
         },
       });
-
-      //saving in local DB
-      db.set(event.id, true);
     } catch (error) {
       console.log(error);
       throw new Error(error);
