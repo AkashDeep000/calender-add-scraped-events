@@ -28,50 +28,38 @@ const fetchPreviousEvent = async (start, end, title) => {
     let previousEventIndex;
     let currentIndex = 0;
 
-    const isSameLang = () => {
-      if (res.data.items[currentIndex].summary.includes("🇬🇧")) {
+    const isSameLang = (item) => {
+      if (item.summary.includes("🇬🇧")) {
         return title.includes("🇬🇧");
       } else {
         return !title.includes("🇬🇧");
       }
     };
 
-    const isSamePrice = () => {
-      if (res.data.items[currentIndex].summary.includes("FT ")) {
+    const isSamePrice = (item) => {
+      if (item.summary.includes("FT ")) {
         return title.includes("FT ");
       } else {
         return !title.includes("FT ");
       }
     };
 
-    const setPreviousEventId = () => {
-      if (
-        res.data.items[currentIndex]?.creator.email === process.env.EMAIL &&
+    const filteredItems = res.data.items.filter(
+      (item) =>
+        item.creator.email === process.env.EMAIL &&
         dateFn
-          .subtract(
-            new Date(start),
-            new Date(res.data.items[currentIndex].start.dateTime)
-          )
+          .subtract(new Date(start), new Date(item.start.dateTime))
           .toMinutes() === 0 &&
         dateFn
-          .subtract(
-            new Date(end),
-            new Date(res.data.items[currentIndex].end.dateTime)
-          )
+          .subtract(new Date(end), new Date(item.end.dateTime))
           .toMinutes() === 0 &&
-        isSameLang() &&
-        isSamePrice()
-      ) {
-        previousEventIndex = currentIndex;
-      } else if (currentIndex < res.data.items.length - 1) {
-        currentIndex++;
-        setPreviousEventId();
-      }
-    };
-    setPreviousEventId();
-    return res.data.items[previousEventIndex];
+        isSameLang(item) &&
+        isSamePrice(item)
+    );
+    return filteredItems[0] || null;
   } catch (error) {
     console.log(error);
+    throw new Error(error);
   }
 };
 
