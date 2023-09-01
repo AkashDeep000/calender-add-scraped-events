@@ -34,7 +34,7 @@ const fetchFareharborEventsLoop = async () => {
        } else {
       isNotRelaventCount = 0;
        }
-    return (isRelavent || isNotRelaventCount < 10) && haveNextPage;
+    return (isRelavent || isNotRelaventCount < 15) && haveNextPage;
   };
   
   const haveNext = haveNextFn();

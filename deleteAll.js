@@ -36,7 +36,6 @@ const deleteEvent = async () => {
     }
   }
   pageToken = res.data.nextPageToken;
-  console.log(pageToken);
   if (res.data.items.length === 2500) {
     await deleteEvent();
   }
