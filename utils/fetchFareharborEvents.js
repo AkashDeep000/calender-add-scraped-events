@@ -126,8 +126,8 @@ const fetchFareharborEvents = async (page) => {
       event.id = "fh" + bookings[i].unicode.split("#")[1];
       event.walker = bookings[i].contact.name;
       event.peopleCount = bookings[i].customer_count;
-      event.adults = bookings[i].customer_breakdown_short.match(/\d/g)[0];
-      event.childs = bookings[i].customer_breakdown_short.match(/\d/g)[1];
+      event.adults = bookings[i].customer_breakdown_short?.match(/\d+/g)[0]
+      event.childs = bookings[i].customer_breakdown_short.match(/\d+/g)[1]
       event.phone = bookings[i].contact.normalized_phone;
       event.source =
         source[bookings[i].user?.uri]

@@ -78,7 +78,7 @@ const addEvent = async (event, source) => {
                 : parseInt(event.peopleCount))
             } ${
               event.id.startsWith("fh")
-                ? event.title
+                ? calendarTitle
                 : previousEvent.summary
                     .replace(
                       previousEvent.summary.replace(/(^\d+)(.+$)/i, "$1"),

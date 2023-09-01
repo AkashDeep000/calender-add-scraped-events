@@ -20,6 +20,7 @@ const fetchPreviousEvent = async (start, end, title) => {
       auth: client,
       timeMin: start,
       timeMax: end,
+      singleEvents: true,
     });
 
     if (res.data.items.length === 0) return null;
@@ -36,16 +37,13 @@ const fetchPreviousEvent = async (start, end, title) => {
     };
 
     const isSamePrice = () => {
-      if (res.data.items[currentIndex].summary.includes("FH")) {
-        return title.includes("FH");
+      if (res.data.items[currentIndex].summary.includes("FT ")) {
+        return title.includes("FT ");
       } else {
-        return !title.includes("FH");
+        return !title.includes("FT ");
       }
     };
-console.log({
-isSameLang: isSameLang(),
-isSamePrice: isSamePrice()
-})
+
     const setPreviousEventId = () => {
       if (
         res.data.items[currentIndex]?.creator.email === process.env.EMAIL &&

@@ -18,10 +18,12 @@ const deleteEvent = async () => {
   const res = await calendar.events.list({
     calendarId: process.env.CALENDAR_ID,
     auth: client,
+    maxResults: 2500,
+    singleEvents: true,
+    pageToken,
   });
-  console.log(res)
   totalCount += res.data.items.length;
-  console.log(totalCount);
+  console.log({ totalCount, nextPageToken: res.data.nextPageToken || null });
   for (let i = 0; i < res.data.items.length; i++) {
     if (res.data.items[i].creator.email === process.env.EMAIL) {
       const deleteRes = await calendar.events.delete({
@@ -33,8 +35,9 @@ const deleteEvent = async () => {
       console.log("Deleted: " + deleteCount + "/" + totalCount);
     }
   }
+  pageToken = res.data.nextPageToken;
+  console.log(pageToken);
   if (res.data.items.length === 2500) {
-    pageToken = res.data.nextPageToken;
     await deleteEvent();
   }
 };
