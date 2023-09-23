@@ -42,10 +42,8 @@ const addEvent = async (event, source) => {
 
     //Creating Event
     try {
-      const calendarTitle = structuredClone(event).title.replace(
-        "Free Tour",
-        "FT"
-      );
+      const calendarTitle = event.title
+      
       const description = `${
         event.childs ? `${event.adults}a ${event.childs}n` : event.peopleCount
       } ${event.walker}\n${event.phone}\n${source}`;
@@ -81,7 +79,7 @@ const addEvent = async (event, source) => {
           requestBody: {
             summary: `${
               parseInt(previousEvent.summary.replace(/(^\d+)(.+$)/i, "$1")) +
-              (previousEvent.description.includes(description)
+              (previousEvent.description?.includes(description)
                 ? 0
                 : parseInt(event.peopleCount))
             } ${

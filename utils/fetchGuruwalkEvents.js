@@ -5,6 +5,7 @@ import JSONdb from "simple-json-db";
 const db = new JSONdb("./storage.json");
 import dateFn from "date-and-time";
 import { DateTime } from "luxon";
+import tourTitles from "../tourTitles.json" assert { type: "json" };
 
 let guruwalkCookies = await getCookies();
 
@@ -57,26 +58,18 @@ const fetchGuruwalkEvents = async (page) => {
       if ($(li).attr("id")?.includes("booking")) {
         const data = {};
         data.id = "gw" + $(li).attr("id").replace("booking-", "");
-        const title = capitalizeFirstLetter(
-          $(li).find(".info-container").find("a").text().trim()
-        );
+        const title = $(li).find(".info-container").find("a").text().trim();
+
         const language = $(li).find("i.fa-globe").next().text().trim();
 
-        if (title.includes("Free Tour Girona")) data.title = "Free Tour Girona";
-        if (title.includes("Free Tour por Besalú"))
-          data.title = "Free Tour Besalú";
-        if (title.includes("Free Tour Sant Feliu"))
-          data.title = "Free Tour Sant Feliu";
-        if (title.includes("Free Tour Sant Feliu de Guíxols"))
-          data.title = "Free Tour Sant Feliu de Guíxols";
-        if (!data.title) data.title = title;
-        data.title +=
-          (title.toLowerCase().includes("night") ? " Nit" : "") +
-          (language.toLowerCase().includes("english") ? " 🇬🇧" : "");
+        tourTitles.forEach((item) => {
+          if (title === item.title) {
+            data.title = item.shortTitle;
+          }
+        });
 
-        data.title = data.title.includes("Nit")
-          ? data.title.replace(" Girona", "")
-          : data.title;
+        if (!data.title) data.title = title;
+        data.title += language.toLowerCase().includes("english") ? " 🇬🇧" : "";
 
         data.url =
           "https://guruwalk.com" +

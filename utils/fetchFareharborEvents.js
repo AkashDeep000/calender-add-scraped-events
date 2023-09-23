@@ -1,5 +1,7 @@
 import { getNewCookies, getCookies } from "./fareharborLogin.js";
 import axios from "axios";
+import tourTitles from "../tourTitles.json" assert { type: "json" };
+
 let fareharborCookies = await getCookies();
 
 const fetchFareharborEvents = async (page) => {
@@ -115,15 +117,16 @@ const fetchFareharborEvents = async (page) => {
       const bookingsTitle = tour[bookings[i].item.uri];
       const bookingsLang = time[bookings[i].availability.uri].lang;
 
-      event.title =
-        (bookingsTitle.includes("History, Legends & Food")
-          ? "HLF"
-          : bookingsTitle) +
-        (bookingsLang.toLowerCase().includes("english") ? " 🇬🇧" : "");
-      event.title = event.title.replace("de Nit", "Nit");
-      event.title = event.title.includes("Nit")
-        ? event.title.replace(" Girona", "")
-        : event.title;
+      tourTitles.forEach((item) => {
+        if (bookingsTitle === item.title) {
+          event.title = item.shortTitle;
+        }
+      });
+
+      event.title += bookingsLang.toLowerCase().includes("english")
+        ? " 🇬🇧"
+        : "";
+
       event.start = time[bookings[i].availability.uri].utc_start_at;
       event.end = time[bookings[i].availability.uri].utc_end_at;
       event.id = "fh" + bookings[i].unicode.split("#")[1];

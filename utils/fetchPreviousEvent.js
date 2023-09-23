@@ -53,8 +53,7 @@ const fetchPreviousEvent = async (start, end, title) => {
         dateFn
           .subtract(new Date(end), new Date(item.end.dateTime))
           .toMinutes() === 0 &&
-        isSameLang(item) &&
-        isSamePrice(item)
+        item.summary === title
     );
     return filteredItems[0] || null;
   } catch (error) {
