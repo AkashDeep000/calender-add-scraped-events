@@ -1,6 +1,7 @@
 import { getNewCookies, getCookies } from "./fareharborLogin.js";
 import axios from "axios";
 import tourTitles from "../tourTitles.json" assert { type: "json" };
+import languages from "../languages.json" assert { type: "json" };
 
 let fareharborCookies = await getCookies();
 
@@ -122,10 +123,13 @@ const fetchFareharborEvents = async (page) => {
           event.title = item.shortTitle;
         }
       });
-if (!event.title) event.title = bookingsTitle;
-      event.title += bookingsLang.toLowerCase().includes("english")
-        ? " 🇬🇧"
-        : "";
+      if (!event.title) event.title = bookingsTitle;
+      if (!event.title) event.title = title;
+      languages.forEach((item) => {
+        if (bookingsLang.toLowerCase().includes(item.name.toLowerCase())) {
+          event.title += " " + item.titleText;
+        }
+      });
 
       event.start = time[bookings[i].availability.uri].utc_start_at;
       event.end = time[bookings[i].availability.uri].utc_end_at;

@@ -6,6 +6,7 @@ const db = new JSONdb("./storage.json");
 import dateFn from "date-and-time";
 import { DateTime } from "luxon";
 import tourTitles from "../tourTitles.json" assert { type: "json" };
+import languages from "../languages.json" assert { type: "json" };
 
 let guruwalkCookies = await getCookies();
 
@@ -69,7 +70,11 @@ const fetchGuruwalkEvents = async (page) => {
         });
 
         if (!data.title) data.title = title;
-        data.title += language.toLowerCase().includes("english") ? " 🇬🇧" : "";
+        languages.forEach((item) => {
+          if (language.toLowerCase().includes(item.name.toLowerCase())) {
+            data.title += " " + item.titleText;
+          }
+        });
 
         data.url =
           "https://guruwalk.com" +

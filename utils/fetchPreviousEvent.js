@@ -53,7 +53,7 @@ const fetchPreviousEvent = async (start, end, title) => {
         dateFn
           .subtract(new Date(end), new Date(item.end.dateTime))
           .toMinutes() === 0 &&
-        item.summary === title
+        item.summary.split(" ").slice(1).join(" ") === title
     );
     return filteredItems[0] || null;
   } catch (error) {
