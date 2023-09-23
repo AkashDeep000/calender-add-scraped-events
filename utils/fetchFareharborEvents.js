@@ -122,7 +122,7 @@ const fetchFareharborEvents = async (page) => {
           event.title = item.shortTitle;
         }
       });
-
+if (!event.title) event.title = bookingsTitle;
       event.title += bookingsLang.toLowerCase().includes("english")
         ? " 🇬🇧"
         : "";
